@@ -1,4 +1,5 @@
 *.py
+*.ipynb
 *.sh
 
 .DS_Store
