@@ -1,6 +1,7 @@
 *.py
 *.ipynb
 *.sh
+.vscode/
 
 .DS_Store
 
