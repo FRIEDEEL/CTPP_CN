@@ -54,15 +54,16 @@ Cairo是一个绘制矢量图的库。
 为了解释Cairo接下来的一系列操作，我们先对Cairo绘图的模型一探究竟。
 这里只会涉及少数几个概念，它们会在接下来的方法中反复地被应用。
 首先我会介绍*名词(nouns)*：
-[目标层(destination)]()、
-[源(source)]()、
-[遮罩(mask)]()、
-以及[语境(context)]。 
+目标层(destination)
+源(source)
+遮罩(mask)
+以及
+语境(context)。
 在这之后介绍*动作(verbs)*，它们会提供操纵这些*名词*的方法，并让你画出你想画的图形。
 生成示意图的代码会放在[这里]()，但先别急着去读。
 
 > 如果你觉得这些介绍有些啰嗦，*Don Ingle*做了个把所有东西整合在一起的SVG[一图流示意图]()。
-> 这些示意图可能需要你用[Inkscape]()之类的东西查看，并且可能需要2个合适的字体才能正确显示。
+> 这些示意图可能需要你用[Inkscape](http://inkscape.org/)之类的东西查看，并且可能需要2个合适的字体才能正确显示。
 > 在学习过程中根据进度放大每页就好。
 > 如果你觉得有用，*Don*本人请你务必下载并分享这些示意图。
 
@@ -76,7 +77,8 @@ Cairo使用的名词概念都有点抽象。
 ### 目标层(Destination)
 > 【译注】这个翻译不怎么准确，但如果用“目标”感觉会和"target"这个词混淆，所以暂译。
 
-*目标层*就是你绘画所在的*表面(Surface)*。
+*目标层*就是你绘画所在的
+[表面(Surface)](http://www.cairographics.org/manual/cairo-surfaces.html)。
 它可能会像在PyGTK教程中的一样，和一些像素数组(pixel array)绑定，
 也可能和某个SVG或者PDF文件绑定，也可能是其他东西。
 这个表面把图形元素集中在一起，
@@ -89,7 +91,9 @@ Cairo使用的名词概念都有点抽象。
 ### 源(Source)
 所谓*源*就是绘图将围绕的“画”本身。
 在某些例子会用纯黑色来表示源，但为了能看到下面的其他层，我会把它用一个半透明的层来展示。
-和现实的绘画不同，源不一定非得是纯色的，它可以是某种*图案(Pattern)*甚至之前创建的其他表面。
+和现实的绘画不同，源不一定非得是纯色的，它可以是某种
+[图案(Pattern)](http://www.cairographics.org/manual/cairo-cairo-pattern-t.html)
+甚至之前创建的其他表面。
 此外还和现实不同的一点是，它可以包含一些关于透明度的信息——Alpha通道。
 
 ![diagram](source.svg)
@@ -124,12 +128,12 @@ Cairo使用的名词概念都有点抽象。
 它们的区别在于指令如何**构建**mask。
 
 ### 描边(Stroke)
-[stroke()]()
+[stroke()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-stroke)
 操作拿着一支**虚拟的笔**沿着path画。
 它让source穿过mask上一条沿着path的或粗或细的线，取决于这支“笔”的
-[line_width]()、
-[dash_style]() 和
-[line_caps]() 。
+[line_width](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-set-line-width)、
+[dash_style](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-set-dash) 和
+[line_caps](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-set-line-cap) 。
 
 ```python
 # Cairo Tutorial: Diagrams (Section #stroke)
@@ -142,11 +146,11 @@ cr.stroke()
 ![diagram](stroke.svg)
 
 ### 填充(Fill)
-[fill()]()
+[fill()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-fill)
 操作则是把path当作像涂色书上的 **边线** 一样的东西，
 让source从path围成的“洞”里穿过mask。
 对于一些复杂的path（比如包含多个 *子路径(sub-path)* 的path——比如一个甜甜圈——或是自相交的路径），这则会被
-[fill rule]()
+[fill rule](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-set-fill-rule)
 所影响。
 
 注意，在stroke操作中，path的会让一半线宽的source分别通过path的两边\*；
@@ -165,12 +169,12 @@ cr.stroke()
 > \*【译注】path是抽象、没有宽度的线，而实际被画出的线则是拥有宽度的。
 
 ### 显示文本/字符(Show Text/Glyphs)
-[show_text()]()
+[show_text()](http://www.cairographics.org/manual/cairo-text.html#cairo-show-text)
 操作则从文本中形成path。
 可能把`shot_text()`想成用
-[text_path()]()
+[text_path()](http://www.cairographics.org/manual/cairo-Paths.html#cairo-text-path)
 去生成一个path，然后再用
-[fill()]()
+[fill()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-fill)
 去转印，会更容易点。
 但注意`show_text()`会缓存字符形状，
 所以它其实在你面对很多文本的时候会更高效一些。
@@ -190,12 +194,12 @@ cr.show_text("a")
 ![diagram](showtext.svg)
 
 ### 绘制(Paint)
-[paint]()
+[paint](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-paint)
 操作是使用一个能把整个source转印到destination上的mask。
 有人将其理解为无限大的mask，也有人理解为没有mask，结果上来看没差啦。
 
 还有个相关的操作叫
-[paint_with_alpha()]()
+[paint_with_alpha()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-paint-with-alpha)
 ，同样允许整个source被转印到destination上，
 但是只允许给定比例的颜色通过。\*
 
@@ -211,9 +215,9 @@ cr.paint_with_alpha(0.5)
 > \*【译注】其实就是给了个透明度。
 
 ### 遮罩(Mask)
-[mask()]()
+[mask()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-mask)
 和
-[mask_surface()]()
+[mask_surface()](http://www.cairographics.org/manual/cairo-cairo-t.html#cairo-mask-surface)
 操作允许根据 **第二个源图案或者图像** 的透明度/不透明度来转印。
 当这个图案或表面(surface)是不透明的，则当前的source会被完全转印到destination上；
 反之则不会有任何东西被转印。
